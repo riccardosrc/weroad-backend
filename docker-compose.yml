@@ -1,0 +1,49 @@
+services:
+  prod:
+    container_name: weroad-be
+    image: weroad-be
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: deploy
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    ports:
+      - $APP_PORT:$APP_PORT
+    depends_on:
+      - database
+
+  dev:
+    container_name: weroad-be-dev
+    image: weroad-be-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    ports:
+      - $APP_PORT:$APP_PORT
+    depends_on:
+      - database
+
+  database:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_DB: ${DATABASE_NAME}
+    ports:
+      - ${DATABASE_PORT}:${DATABASE_PORT}
+    volumes:
+      - weroad-db:/var/lib/postgresql/data
+
+volumes:
+  weroad-db:

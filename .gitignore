@@ -37,6 +37,9 @@ lerna-debug.log*
 # Env
 .env
 
+# temporary orm files
+temp
+
 # Requirements
 samples
 TASK.md

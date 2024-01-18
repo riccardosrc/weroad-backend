@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { existsSync } from 'fs';
 import { configDotenv } from 'dotenv';
+
 import { EnvTarget } from './types/env-target.enum';
 import { EnvSchema } from './types/env-schema.interface';
 
@@ -23,7 +24,10 @@ if (error) {
 // construct env schema
 const env: EnvSchema = {
   target: EnvTarget[parsed?.ENV_TARGET],
-  app: { port: +parsed?.APP_PORT },
+  app: {
+    port: +parsed?.APP_PORT,
+    jwtSecret: parsed?.APP_JWT_SECRET,
+  },
   database: {
     host: parsed?.DATABASE_HOST,
     port: +parsed?.DATABASE_PORT,

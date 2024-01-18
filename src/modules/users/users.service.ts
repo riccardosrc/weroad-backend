@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { EntityManager } from '@mikro-orm/postgresql';
+
+import { PaginationArgs } from 'src/common/dto/pagination.args';
 import { CreateUserInput } from './dto/create-user.input';
 import { User } from './entities/user.entity';
-import { PaginationArgs } from 'src/common/dto/pagination.args';
 import { RolesService } from './roles.service';
-import { EntityManager } from '@mikro-orm/postgresql';
 
 @Injectable()
 export class UsersService {
@@ -12,6 +13,11 @@ export class UsersService {
     private rolesService: RolesService,
   ) {}
 
+  /**
+   * Creates a new user with provided informations
+   * @param createUserInput user input properties
+   * @returns newly created user
+   */
   async create({ email, password, roleIds }: CreateUserInput) {
     const roles = await this.rolesService.findByIds(roleIds);
     const user = this.em.create(User, { email, password, roles });
@@ -19,6 +25,11 @@ export class UsersService {
     return user;
   }
 
+  /**
+   * retrieve users from db with pagination
+   * @param paginationArgs pagination options
+   * @returns paginated users list
+   */
   async findAll({ offset, limit }: PaginationArgs) {
     const [users, count] = await this.em.findAndCount(
       User,
@@ -28,11 +39,33 @@ export class UsersService {
     return { users, count };
   }
 
+  /**
+   * find user by id
+   * @param id user id
+   * @returns found user
+   */
   async findOne(id: string) {
-    const user = await this.em.findOne(User, { id: id });
-    if (!user) {
-      throw new NotFoundException(`user with id ${id} not found`);
-    }
+    const user = await this.em.findOne(User, { id });
     return user;
+  }
+
+  /**
+   * find user by email
+   * @param email user email
+   * @returns found user
+   */
+  async findByEmail(email: string) {
+    const user = await this.em.findOne(User, { email });
+    return user;
+  }
+
+  /**
+   * get user roles
+   * @param user target user
+   * @returns user roles
+   */
+  async getUserRoles(user: User) {
+    const { roles } = await this.em.populate(user, ['roles']);
+    return roles;
   }
 }

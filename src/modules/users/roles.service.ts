@@ -5,8 +5,9 @@ import {
   OnApplicationBootstrap,
 } from '@nestjs/common';
 import { EnsureRequestContext, MikroORM } from '@mikro-orm/core';
-import { Role } from './entities/role.entity';
 import { EntityManager } from '@mikro-orm/postgresql';
+
+import { Role } from './entities/role.entity';
 
 @Injectable()
 export class RolesService implements OnApplicationBootstrap {
@@ -19,7 +20,7 @@ export class RolesService implements OnApplicationBootstrap {
     this.logger = new Logger(RolesService.name);
   }
 
-  async create(name: string) {
+  private async create(name: string) {
     const newRole = this.em.create(Role, { name });
     await this.em.persistAndFlush(newRole);
     return newRole;

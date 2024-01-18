@@ -1,9 +1,21 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
+import { NotFoundException, UseGuards } from '@nestjs/common';
+
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { PaginationArgs } from 'src/common/dto/pagination.args';
 import { UsersService } from './users.service';
 import { UserType } from './types/user.type';
 import { CreateUserInput } from './dto/create-user.input';
-import { PaginationArgs } from 'src/common/dto/pagination.args';
 import { PaginatedUsers } from './types/paginated-users.type';
+import { User } from './entities/user.entity';
 
 @Resolver(() => UserType)
 export class UsersResolver {
@@ -21,7 +33,22 @@ export class UsersResolver {
   }
 
   @Query(() => UserType, { name: 'user' })
-  findOne(@Args('id') id: string) {
-    return this.usersService.findOne(id);
+  async findOne(@Args('id') id: string) {
+    const user = await this.usersService.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return user;
+  }
+
+  @Query(() => UserType)
+  @UseGuards(JwtAuthGuard)
+  getCurrentUser(@CurrentUser() user: User) {
+    return user;
+  }
+
+  @ResolveField()
+  async roles(@Parent() user: User) {
+    return this.usersService.getUserRoles(user);
   }
 }

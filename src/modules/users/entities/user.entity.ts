@@ -7,9 +7,10 @@ import {
   Property,
   UuidType,
 } from '@mikro-orm/core';
-import { Role } from './role.entity';
 import { v4 } from 'uuid';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
+
+import { Role } from './role.entity';
 
 @Entity()
 export class User {
@@ -28,5 +29,10 @@ export class User {
   @BeforeCreate()
   async hashPassword() {
     this.password = await hash(this.password, 10);
+  }
+
+  async comparePassword(password: string) {
+    const isEqual = await compare(password, this.password);
+    return isEqual;
   }
 }

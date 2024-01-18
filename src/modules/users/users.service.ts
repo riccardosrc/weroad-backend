@@ -1,25 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
-import { InjectRepository } from '@mikro-orm/nestjs';
 import { User } from './entities/user.entity';
-import { EntityRepository } from '@mikro-orm/core';
 import { PaginationArgs } from 'src/common/dto/pagination.args';
+import { RolesService } from './roles.service';
+import { EntityManager } from '@mikro-orm/postgresql';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: EntityRepository<User>,
+    private em: EntityManager,
+    private rolesService: RolesService,
   ) {}
 
-  async create({ email, password }: CreateUserInput) {
-    const newUser = this.usersRepository.create({ email, password });
-    const id = await this.usersRepository.insert(newUser);
-    return this.findOne(id);
+  async create({ email, password, roleIds }: CreateUserInput) {
+    const roles = await this.rolesService.findByIds(roleIds);
+    const user = this.em.create(User, { email, password, roles });
+    await this.em.persistAndFlush(user);
+    return user;
   }
 
   async findAll({ offset, limit }: PaginationArgs) {
-    const [users, count] = await this.usersRepository.findAndCount(
+    const [users, count] = await this.em.findAndCount(
+      User,
       {},
       { offset, limit },
     );
@@ -27,7 +29,7 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const user = await this.usersRepository.findOne({ id: id });
+    const user = await this.em.findOne(User, { id: id });
     if (!user) {
       throw new NotFoundException(`user with id ${id} not found`);
     }

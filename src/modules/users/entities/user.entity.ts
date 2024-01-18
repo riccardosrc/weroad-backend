@@ -1,4 +1,5 @@
 import {
+  BeforeCreate,
   Collection,
   Entity,
   ManyToMany,
@@ -8,6 +9,7 @@ import {
 } from '@mikro-orm/core';
 import { Role } from './role.entity';
 import { v4 } from 'uuid';
+import { hash } from 'bcrypt';
 
 @Entity()
 export class User {
@@ -22,4 +24,9 @@ export class User {
 
   @ManyToMany(() => Role)
   roles = new Collection<Role>(this);
+
+  @BeforeCreate()
+  async hashPassword() {
+    this.password = await hash(this.password, 10);
+  }
 }

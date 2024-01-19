@@ -1,17 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { EntityManager } from '@mikro-orm/postgresql';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import { EnsureRequestContext, EntityManager } from '@mikro-orm/postgresql';
 
 import { PaginationArgs } from 'src/common/dto/pagination.args';
 import { CreateUserInput } from './dto/create-user.input';
 import { User } from './entities/user.entity';
 import { RolesService } from './roles.service';
+import { ConfigService } from '@nestjs/config';
+import { MikroORM } from '@mikro-orm/core';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnApplicationBootstrap {
+  private logger: Logger;
+
   constructor(
+    private orm: MikroORM,
     private em: EntityManager,
     private rolesService: RolesService,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    this.logger = new Logger(UsersService.name);
+  }
 
   /**
    * Creates a new user with provided informations
@@ -67,5 +75,32 @@ export class UsersService {
   async getUserRoles(user: User) {
     const { roles } = await this.em.populate(user, ['roles']);
     return roles;
+  }
+
+  @EnsureRequestContext()
+  async onApplicationBootstrap() {
+    this.logger.log('checking existing admin user');
+    const existingAdmin = await this.em.findOne(
+      User,
+      { roles: { name: RolesService.adminRole } },
+      { populate: ['roles'] },
+    );
+    console.log(existingAdmin);
+    if (existingAdmin) {
+      this.logger.log('admin user already in place');
+      return;
+    }
+    this.logger.log('creating first admin user');
+    const adminRole = await this.rolesService.seedAdminRole();
+    const adminEmail = this.configService.get<string>('app.defaultAdminEmail');
+    const adminPassword = this.configService.get<string>(
+      'app.defaultAdminPassword',
+    );
+    await this.create({
+      email: adminEmail,
+      password: adminPassword,
+      roleIds: [adminRole.id],
+    });
+    this.logger.log('first admin successfully created');
   }
 }

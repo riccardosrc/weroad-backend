@@ -8,6 +8,8 @@ export interface EnvSchema {
   app: {
     port: number;
     jwtSecret: string;
+    defaultAdminEmail: string;
+    defaultAdminPassword: string;
   };
   database: {
     host: string;

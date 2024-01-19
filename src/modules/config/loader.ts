@@ -27,6 +27,8 @@ const env: EnvSchema = {
   app: {
     port: +parsed?.APP_PORT,
     jwtSecret: parsed?.APP_JWT_SECRET,
+    defaultAdminEmail: parsed?.APP_DEFAULT_ADMIN_EMAIL,
+    defaultAdminPassword: parsed?.APP_DEFAULT_ADMIN_PASSWORD,
   },
   database: {
     host: parsed?.DATABASE_HOST,

@@ -1,17 +1,13 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  OnApplicationBootstrap,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { EnsureRequestContext, MikroORM } from '@mikro-orm/core';
 import { EntityManager } from '@mikro-orm/postgresql';
 
 import { Role } from './entities/role.entity';
 
 @Injectable()
-export class RolesService implements OnApplicationBootstrap {
+export class RolesService {
   private logger: Logger;
+  static readonly adminRole = 'admin';
 
   constructor(
     private em: EntityManager,
@@ -47,13 +43,13 @@ export class RolesService implements OnApplicationBootstrap {
   }
 
   @EnsureRequestContext()
-  async onApplicationBootstrap() {
+  async seedAdminRole() {
     const roles = await this.findAll();
     if (roles.length > 0) {
       return;
     }
-    await this.create('admin');
-    await this.create('user');
-    this.logger.log('roles seed completed');
+    const adminRole = await this.create(RolesService.adminRole);
+    this.logger.log('role seed completed');
+    return adminRole;
   }
 }

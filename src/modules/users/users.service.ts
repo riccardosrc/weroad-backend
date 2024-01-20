@@ -1,12 +1,12 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { EnsureRequestContext, EntityManager } from '@mikro-orm/postgresql';
+import { MikroORM, Populate, PopulateHint } from '@mikro-orm/core';
 
 import { PaginationArgs } from 'src/common/dto/pagination.args';
 import { CreateUserInput } from './dto/create-user.input';
 import { User } from './entities/user.entity';
 import { RolesService } from './roles.service';
-import { ConfigService } from '@nestjs/config';
-import { MikroORM } from '@mikro-orm/core';
 
 @Injectable()
 export class UsersService implements OnApplicationBootstrap {
@@ -50,10 +50,18 @@ export class UsersService implements OnApplicationBootstrap {
   /**
    * find user by id
    * @param id user id
+   * @param withRoles flag to populate user roles
    * @returns found user
    */
-  async findOne(id: string) {
-    const user = await this.em.findOne(User, { id });
+  async findOne(id: string, withRoles = false) {
+    const relationsToLoad: Populate<User, PopulateHint> = withRoles
+      ? ['roles']
+      : [];
+    const user = await this.em.findOne(
+      User,
+      { id },
+      { populate: relationsToLoad },
+    );
     return user;
   }
 
@@ -85,7 +93,6 @@ export class UsersService implements OnApplicationBootstrap {
       { roles: { name: RolesService.adminRole } },
       { populate: ['roles'] },
     );
-    console.log(existingAdmin);
     if (existingAdmin) {
       this.logger.log('admin user already in place');
       return;

@@ -1,5 +1,5 @@
 import { ArgsType, Field, Int } from '@nestjs/graphql';
-import { Max, Min } from 'class-validator';
+import { Min } from 'class-validator';
 
 @ArgsType()
 export class PaginationArgs {
@@ -8,6 +8,6 @@ export class PaginationArgs {
   offset: number = 0;
 
   @Field(() => Int)
-  @Max(50)
+  @Min(0)
   limit: number = 10;
 }

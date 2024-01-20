@@ -9,8 +9,8 @@ import {
 import { NotFoundException, UseGuards } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { PaginationArgs } from 'src/common/dto/pagination.args';
+import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
+import { PaginationArgs } from 'src/shared/dto/pagination.args';
 import { UsersService } from './users.service';
 import { UserType } from './types/user.type';
 import { CreateUserInput } from './dto/create-user.input';

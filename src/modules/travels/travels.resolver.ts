@@ -9,10 +9,10 @@ import {
 } from '@nestjs/graphql';
 import { NotFoundException, UseGuards } from '@nestjs/common';
 
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { OptionalAuth } from 'src/common/decorators/optional-auth.decorator';
-import { PaginationArgs } from 'src/common/dto/pagination.args';
-import { MessageType } from 'src/common/types/message.type';
+import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
+import { OptionalAuth } from 'src/shared/decorators/optional-auth.decorator';
+import { PaginationArgs } from 'src/shared/dto/pagination.args';
+import { MessageType } from 'src/shared/types/message.type';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from '../users/entities/user.entity';
 import { TravelsService } from './travels.service';

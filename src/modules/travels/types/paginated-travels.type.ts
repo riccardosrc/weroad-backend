@@ -1,6 +1,6 @@
 import { ObjectType } from '@nestjs/graphql';
 
-import { Paginated } from 'src/common/types/paginated.type';
+import { Paginated } from 'src/shared/types/paginated.type';
 import { TravelType } from './travel.type';
 
 @ObjectType()

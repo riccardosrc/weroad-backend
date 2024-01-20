@@ -4,7 +4,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
-import { OPTIONAL_AUTH_KEY } from 'src/common/decorators/optional-auth.decorator';
+import { OPTIONAL_AUTH_KEY } from 'src/shared/decorators/optional-auth.decorator';
 import { AvailableStrategy } from './strategies/strategies.enum';
 
 @Injectable()

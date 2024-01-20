@@ -18,6 +18,7 @@ export class DatabaseProvider {
       autoLoadEntities: true,
       driver: PostgreSqlDriver,
       extensions: [Migrator],
+      debug: false,
       migrations: {
         tableName: 'mikro_orm_migrations',
         path: Utils.detectTsNode() ? 'src/migrations' : 'dist/migrations',

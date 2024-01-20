@@ -14,7 +14,7 @@ import {
   UniqueConstraintViolationException,
 } from '@mikro-orm/core';
 
-import { PaginationArgs } from 'src/common/dto/pagination.args';
+import { PaginationArgs } from 'src/shared/dto/pagination.args';
 import { CreateUserInput } from './dto/create-user.input';
 import { User } from './entities/user.entity';
 import { RolesService } from './roles.service';

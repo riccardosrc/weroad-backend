@@ -5,7 +5,7 @@ import {
   UniqueConstraintViolationException,
 } from '@mikro-orm/postgresql';
 
-import { PaginationArgs } from 'src/common/dto/pagination.args';
+import { PaginationArgs } from 'src/shared/dto/pagination.args';
 import { Travel } from './entities/travel.entity';
 import { TravelMood } from './entities/travel-mood.entity';
 import { CreateTravelInput } from './dto/create-travel.input';

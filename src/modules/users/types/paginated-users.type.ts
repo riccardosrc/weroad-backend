@@ -1,4 +1,4 @@
-import { Paginated } from 'src/common/types/paginated.type';
+import { Paginated } from 'src/shared/types/paginated.type';
 import { UserType } from './user.type';
 import { ObjectType } from '@nestjs/graphql';
 

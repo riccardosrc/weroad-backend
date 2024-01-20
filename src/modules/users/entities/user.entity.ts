@@ -11,6 +11,7 @@ import { v4 } from 'uuid';
 import { hash, compare } from 'bcrypt';
 
 import { Role } from './role.entity';
+import { RolesService } from '../roles.service';
 
 @Entity()
 export class User {
@@ -31,8 +32,20 @@ export class User {
     this.password = await hash(this.password, 10);
   }
 
+  /**
+   * compare provided password with the hashed one of the user
+   * @param password password to compare
+   * @returns match result
+   */
   async comparePassword(password: string) {
     const isEqual = await compare(password, this.password);
     return isEqual;
+  }
+
+  get isAdmin() {
+    if (!this.roles || this.roles.length === 0) {
+      return false;
+    }
+    return !!this.roles.find((role) => role.name === RolesService.adminRole);
   }
 }

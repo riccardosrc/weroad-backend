@@ -1,7 +1,18 @@
-import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  Logger,
+  OnApplicationBootstrap,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EnsureRequestContext, EntityManager } from '@mikro-orm/postgresql';
-import { MikroORM, Populate, PopulateHint } from '@mikro-orm/core';
+import {
+  MikroORM,
+  Populate,
+  PopulateHint,
+  UniqueConstraintViolationException,
+} from '@mikro-orm/core';
 
 import { PaginationArgs } from 'src/common/dto/pagination.args';
 import { CreateUserInput } from './dto/create-user.input';
@@ -27,10 +38,20 @@ export class UsersService implements OnApplicationBootstrap {
    * @returns newly created user
    */
   async create({ email, password, roleIds }: CreateUserInput) {
-    const roles = await this.rolesService.findByIds(roleIds);
-    const user = this.em.create(User, { email, password, roles });
-    await this.em.persistAndFlush(user);
-    return user;
+    try {
+      const roles = await this.rolesService.findByIds(roleIds);
+      if (roles.length === 0) {
+        throw new BadRequestException('Inavlid roles');
+      }
+      const user = this.em.create(User, { email, password, roles });
+      await this.em.persistAndFlush(user);
+      return user;
+    } catch (error) {
+      if (error instanceof UniqueConstraintViolationException) {
+        throw new ConflictException('email already in use');
+      }
+      throw error;
+    }
   }
 
   /**

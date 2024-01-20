@@ -1,5 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { EntityManager, FilterQuery } from '@mikro-orm/postgresql';
+import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  EntityManager,
+  FilterQuery,
+  UniqueConstraintViolationException,
+} from '@mikro-orm/postgresql';
 
 import { PaginationArgs } from 'src/common/dto/pagination.args';
 import { Travel } from './entities/travel.entity';
@@ -22,8 +26,15 @@ export class TravelsService {
       ...travelInput,
       mood: travelMood,
     });
-    await this.em.persistAndFlush([travelMood, travel]);
-    return travel;
+    try {
+      await this.em.persistAndFlush([travelMood, travel]);
+      return travel;
+    } catch (error) {
+      if (error instanceof UniqueConstraintViolationException) {
+        throw new ConflictException('travel name already in use');
+      }
+      throw error;
+    }
   }
 
   /**

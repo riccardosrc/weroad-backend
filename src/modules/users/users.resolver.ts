@@ -31,7 +31,7 @@ export class UsersResolver {
   @UseGuards(JwtAuthGuard)
   async findAll(@Args() paginationArgs: PaginationArgs) {
     const { users, count } = await this.usersService.findAll(paginationArgs);
-    return { items: users, totalCount: count, hasNextPage: false };
+    return new PaginatedUsers(users, count);
   }
 
   @Query(() => UserType, { name: 'user' })

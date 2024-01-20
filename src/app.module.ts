@@ -23,6 +23,8 @@ import { TravelsModule } from './modules/travels/travels.module';
     TravelsModule,
   ],
   controllers: [],
-  providers: [{ provide: APP_PIPE, useClass: ValidationPipe }],
+  providers: [
+    { provide: APP_PIPE, useValue: new ValidationPipe({ transform: true }) },
+  ],
 })
 export class AppModule {}

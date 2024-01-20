@@ -6,6 +6,7 @@ import { DatabaseModule } from './modules/database/database.module';
 import { UsersModule } from './modules/users/users.module';
 import { ConfigModule } from './modules/config/config.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { TravelsModule } from './modules/travels/travels.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
     AuthModule,
     UsersModule,
+    TravelsModule,
   ],
   controllers: [],
   providers: [],

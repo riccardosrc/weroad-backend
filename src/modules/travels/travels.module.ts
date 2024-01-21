@@ -9,5 +9,6 @@ import { TravelMood } from './entities/travel-mood.entity';
 @Module({
   imports: [MikroOrmModule.forFeature([Travel, TravelMood])],
   providers: [TravelsResolver, TravelsService],
+  exports: [TravelsService],
 })
 export class TravelsModule {}

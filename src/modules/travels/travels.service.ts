@@ -1,11 +1,13 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import {
+  Collection,
   EntityManager,
   FilterQuery,
   UniqueConstraintViolationException,
 } from '@mikro-orm/postgresql';
 
 import { PaginationArgs } from 'src/shared/dto/pagination.args';
+import { Tour } from '../tours/entities/tour.entity';
 import { Travel } from './entities/travel.entity';
 import { TravelMood } from './entities/travel-mood.entity';
 import { CreateTravelInput } from './dto/create-travel.input';
@@ -81,5 +83,15 @@ export class TravelsService {
   async getTravelMood(travel: Travel): Promise<TravelMood> {
     const { mood } = await this.em.populate(travel, ['mood']);
     return mood;
+  }
+
+  /**
+   * get travel mood informations
+   * @param travel travel to populate
+   * @returns travel mood
+   */
+  async getTravelTours(travel: Travel): Promise<Collection<Tour>> {
+    const { tours } = await this.em.populate(travel, ['tours']);
+    return tours;
   }
 }

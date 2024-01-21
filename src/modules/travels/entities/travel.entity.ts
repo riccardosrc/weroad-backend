@@ -1,7 +1,9 @@
 import {
   Cascade,
+  Collection,
   Entity,
   IntegerType,
+  OneToMany,
   OneToOne,
   PrimaryKey,
   Property,
@@ -10,6 +12,7 @@ import {
 } from '@mikro-orm/core';
 import { v4 } from 'uuid';
 
+import { Tour } from '../../tours/entities/tour.entity';
 import { TravelMood } from './travel-mood.entity';
 
 @Entity()
@@ -35,4 +38,7 @@ export class Travel {
 
   @OneToOne(() => TravelMood, { cascade: [Cascade.ALL] })
   mood: TravelMood;
+
+  @OneToMany(() => Tour, (tour) => tour.travel)
+  tours = new Collection<Tour>(this);
 }

@@ -8,6 +8,7 @@ import { UsersModule } from './modules/users/users.module';
 import { ConfigModule } from './modules/config/config.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TravelsModule } from './modules/travels/travels.module';
+import { ToursModule } from './modules/tours/tours.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TravelsModule } from './modules/travels/travels.module';
     AuthModule,
     UsersModule,
     TravelsModule,
+    ToursModule,
   ],
   controllers: [],
   providers: [

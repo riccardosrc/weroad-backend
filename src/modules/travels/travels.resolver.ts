@@ -7,7 +7,11 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { NotFoundException, UseGuards } from '@nestjs/common';
+import {
+  ForbiddenException,
+  NotFoundException,
+  UseGuards,
+} from '@nestjs/common';
 
 import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
 import { OptionalAuth } from 'src/shared/decorators/optional-auth.decorator';
@@ -15,6 +19,7 @@ import { PaginationArgs } from 'src/shared/dto/pagination.args';
 import { MessageType } from 'src/shared/types/message.type';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from '../users/entities/user.entity';
+import { TourType } from '../tours/type/tour.type';
 import { TravelsService } from './travels.service';
 import { PaginatedTravels } from './types/paginated-travels.type';
 import { TravelMoodType } from './types/travel-mood.type';
@@ -51,6 +56,25 @@ export class TravelsResolver {
     return new PaginatedTravels(travels, count);
   }
 
+  @Query(() => TravelType, { name: 'travel' })
+  @UseGuards(JwtAuthGuard)
+  @OptionalAuth()
+  async findOne(
+    @CurrentUser() user: User,
+    @Args('id') id: string,
+  ): Promise<Travel> {
+    // admin user can access all travels
+    const isPublicRequest = !user?.isAdmin;
+    const travel = await this.travelsService.findOne(id);
+    if (!travel) {
+      throw new NotFoundException('travel not found');
+    }
+    if (isPublicRequest && !travel.isPublic) {
+      throw new ForbiddenException('private travel');
+    }
+    return travel;
+  }
+
   @Mutation(() => MessageType)
   @UseGuards(JwtAuthGuard)
   async deleteTravel(@Args('id', { type: () => String }) travelId: string) {
@@ -70,5 +94,10 @@ export class TravelsResolver {
   @ResolveField(() => Int)
   async nights(@Parent() travel: Travel) {
     return travel.days - 1;
+  }
+
+  @ResolveField(() => [TourType])
+  async tours(@Parent() travel: Travel) {
+    return this.travelsService.getTravelTours(travel);
   }
 }

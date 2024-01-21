@@ -29,7 +29,7 @@ FROM base as development
 WORKDIR /app
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
-CMD ["pnpm", "run", "start:dev"]
+CMD ["pnpm", "run", "start:debug"]
 
 # 
 # Run Stage

@@ -30,6 +30,7 @@ services:
       - .env
     ports:
       - $APP_PORT:$APP_PORT
+      - 9229:9229
     depends_on:
       - database
 

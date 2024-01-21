@@ -30,7 +30,7 @@ export class JwtAuthGuard
       [context.getHandler(), context.getClass()],
     );
     const ctx = GqlExecutionContext.create(context);
-    const authorizationHeader = ctx.getContext().headers?.authorization;
+    const authorizationHeader = ctx.getContext().req.headers?.authorization;
     if (!authorizationHeader && isAuthOptional) {
       return true;
     }

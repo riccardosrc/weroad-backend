@@ -52,6 +52,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@golevelup/ts-jest": "^0.4.0",
     "@mikro-orm/cli": "^6.0.4",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
@@ -94,7 +95,10 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    }
   },
   "mikro-orm": {
     "useTsNode": true,

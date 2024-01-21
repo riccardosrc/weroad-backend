@@ -79,6 +79,9 @@ dependencies:
     version: 9.0.1
 
 devDependencies:
+  '@golevelup/ts-jest':
+    specifier: ^0.4.0
+    version: 0.4.0
   '@mikro-orm/cli':
     specifier: ^6.0.4
     version: 6.0.4(pg@8.11.3)
@@ -793,6 +796,10 @@ packages:
   /@eslint/js@8.56.0:
     resolution: {integrity: sha512-gMsVel9D7f2HLkBma9VbtzZRehRogVRfbr++f06nL2vnCGCNlzOD+/MUov/F4p8myyAHspEhVobgjpX64q5m6A==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    dev: true
+
+  /@golevelup/ts-jest@0.4.0:
+    resolution: {integrity: sha512-ehgllV/xU8PC+yVyEUtTzhiSQKsr7k5Jz74B6dtCaVJz7/Vo7JiaACsCLvD7/iATlJUAEqvBson0OHewD3JDzQ==}
     dev: true
 
   /@graphql-tools/merge@8.4.2(graphql@16.8.1):

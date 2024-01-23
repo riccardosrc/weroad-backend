@@ -33,6 +33,9 @@ export class Travel {
   @Property()
   description: string;
 
+  @Property()
+  image: string;
+
   @Property({ type: IntegerType })
   days: number;
 

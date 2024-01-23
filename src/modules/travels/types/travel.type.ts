@@ -28,6 +28,9 @@ export class TravelType {
   @Field()
   description: string;
 
+  @Field()
+  image: string;
+
   @Field(() => Int)
   days: number;
 

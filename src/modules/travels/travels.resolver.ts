@@ -75,6 +75,25 @@ export class TravelsResolver {
     return travel;
   }
 
+  @Query(() => TravelType, { name: 'travelBySlug' })
+  @UseGuards(JwtAuthGuard)
+  @OptionalAuth()
+  async findOneBySlug(
+    @CurrentUser() user: User,
+    @Args('slug') slug: string,
+  ): Promise<Travel> {
+    // admin user can access all travels
+    const isPublicRequest = !user?.isAdmin;
+    const travel = await this.travelsService.findOneBySlug(slug);
+    if (!travel) {
+      throw new NotFoundException('travel not found');
+    }
+    if (isPublicRequest && !travel.isPublic) {
+      throw new ForbiddenException('private travel');
+    }
+    return travel;
+  }
+
   @Mutation(() => MessageType)
   @UseGuards(JwtAuthGuard)
   async deleteTravel(@Args('id', { type: () => String }) travelId: string) {

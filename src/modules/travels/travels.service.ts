@@ -68,6 +68,16 @@ export class TravelsService {
   }
 
   /**
+   * find travel with provided slug
+   * @param slug travel slug
+   * @returns found travel
+   */
+  async findOneBySlug(slug: string) {
+    const travel = await this.em.findOne(Travel, { slug });
+    return travel;
+  }
+
+  /**
    * delete provided travel
    * @param travel travel top delete
    */

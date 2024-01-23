@@ -1,4 +1,4 @@
-import { Field, InputType, Int, OmitType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 import { Min, ValidateNested, Matches } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
@@ -6,11 +6,16 @@ import { TravelType } from '../types/travel.type';
 import { CreateTravelMoodInput } from './create-travel-mood.input';
 
 @InputType()
-export class CreateTravelInput extends OmitType(
-  TravelType,
-  ['id', 'mood', 'nights', 'days', 'slug'],
-  InputType,
-) {
+export class CreateTravelInput {
+  @Field()
+  name: string;
+
+  @Field()
+  description: string;
+
+  @Field()
+  isPublic: boolean;
+
   @Field(() => Int)
   @Min(0)
   days: number;

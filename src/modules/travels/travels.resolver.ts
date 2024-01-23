@@ -1,5 +1,7 @@
 import {
   Args,
+  Float,
+  GraphQLISODateTime,
   Int,
   Mutation,
   Parent,
@@ -26,10 +28,14 @@ import { TravelMoodType } from './types/travel-mood.type';
 import { Travel } from './entities/travel.entity';
 import { TravelType } from './types/travel.type';
 import { CreateTravelInput } from './dto/create-travel.input';
+import { ToursService } from '../tours/tours.service';
 
 @Resolver(() => TravelType)
 export class TravelsResolver {
-  constructor(private readonly travelsService: TravelsService) {}
+  constructor(
+    private readonly travelsService: TravelsService,
+    private readonly toursService: ToursService,
+  ) {}
 
   @Mutation(() => TravelType)
   @UseGuards(JwtAuthGuard)
@@ -118,5 +124,21 @@ export class TravelsResolver {
   @ResolveField(() => [TourType])
   async tours(@Parent() travel: Travel) {
     return this.travelsService.getTravelTours(travel);
+  }
+
+  @ResolveField(() => Float)
+  async cheapestTour(@Parent() travel: Travel) {
+    const price = await this.toursService.findCheapestPriceByTravel(travel);
+    if (!price) {
+      return undefined;
+    }
+    return price / 100;
+  }
+
+  @ResolveField(() => GraphQLISODateTime)
+  async firstAvailableDate(@Parent() travel: Travel) {
+    const firstDate =
+      await this.toursService.findFirstAvailableDateByTravel(travel);
+    return firstDate;
   }
 }

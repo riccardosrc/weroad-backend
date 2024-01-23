@@ -14,6 +14,7 @@ import { PaginationArgs } from 'src/shared/dto/pagination.args';
 import { TravelsService } from '../travels/travels.service';
 import { CreateTourInput } from './dto/create-tour.input';
 import { Tour } from './entities/tour.entity';
+import { Travel } from '../travels/entities/travel.entity';
 
 @Injectable()
 export class ToursService {
@@ -69,5 +70,33 @@ export class ToursService {
   async findOne(id: string) {
     const tour = await this.em.findOne(Tour, { id }, { populate: ['travel'] });
     return tour;
+  }
+
+  /**
+   * Find cheapest price tour for the given travel
+   * @param travel travel target
+   * @returns cheapest price
+   */
+  async findCheapestPriceByTravel(travel: Travel) {
+    const cheapest = await this.em.findOne(
+      Tour,
+      { travel: { id: travel.id } },
+      { populate: ['travel'], orderBy: { price: 'ASC' } },
+    );
+    return cheapest?.price;
+  }
+
+  /**
+   * Find earlier date tour for the given travel
+   * @param travel travel target
+   * @returns earlier date
+   */
+  async findFirstAvailableDateByTravel(travel: Travel) {
+    const earlier = await this.em.findOne(
+      Tour,
+      { travel: { id: travel.id } },
+      { populate: ['travel'], orderBy: { startDate: 'ASC' } },
+    );
+    return earlier?.startDate;
   }
 }

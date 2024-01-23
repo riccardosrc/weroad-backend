@@ -1,4 +1,12 @@
-import { Field, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
+import {
+  Field,
+  Float,
+  GraphQLISODateTime,
+  ID,
+  InputType,
+  Int,
+  ObjectType,
+} from '@nestjs/graphql';
 
 import { TravelMoodType } from './travel-mood.type';
 
@@ -25,6 +33,12 @@ export class TravelType {
 
   @Field(() => Int)
   nights: number;
+
+  @Field(() => Float)
+  cheapestTour: number;
+
+  @Field(() => GraphQLISODateTime)
+  firstAvailableDate: Date;
 
   @Field(() => TravelMoodType)
   mood: TravelMoodType;

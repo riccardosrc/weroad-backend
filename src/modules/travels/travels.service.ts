@@ -101,7 +101,9 @@ export class TravelsService {
    * @returns travel mood
    */
   async getTravelTours(travel: Travel): Promise<Collection<Tour>> {
-    const { tours } = await this.em.populate(travel, ['tours']);
+    const { tours } = await this.em.populate(travel, ['tours'], {
+      orderBy: { tours: { startDate: 'ASC' } },
+    });
     return tours;
   }
 }

@@ -37,11 +37,11 @@ export class TravelType {
   @Field(() => Int)
   nights: number;
 
-  @Field(() => Float)
-  cheapestTour: number;
+  @Field(() => Float, { nullable: true })
+  cheapestTour?: number;
 
-  @Field(() => GraphQLISODateTime)
-  firstAvailableDate: Date;
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  firstAvailableDate?: Date;
 
   @Field(() => TravelMoodType)
   mood: TravelMoodType;

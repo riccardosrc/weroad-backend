@@ -16,6 +16,7 @@ import { TourType } from './type/tour.type';
 import { Tour } from './entities/tour.entity';
 import { CreateTourInput } from './dto/create-tour.input';
 import { PaginatedTours } from './type/paginated-tours.type';
+import { UpdateTourInput } from './dto/update-tour.input';
 
 @Resolver(() => TourType)
 export class ToursResolver {
@@ -25,6 +26,16 @@ export class ToursResolver {
   @UseGuards(JwtAuthGuard)
   async createTour(@Args('createTourInput') createTourInput: CreateTourInput) {
     const tour = await this.toursService.create(createTourInput);
+    return tour;
+  }
+
+  @Mutation(() => TourType)
+  @UseGuards(JwtAuthGuard)
+  async updateTour(
+    @Args('id') id: string,
+    @Args('updateTourInput') updateTourInput: UpdateTourInput,
+  ) {
+    const tour = await this.toursService.update(id, updateTourInput);
     return tour;
   }
 

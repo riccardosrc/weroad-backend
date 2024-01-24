@@ -6,7 +6,9 @@ import {
 import {
   EntityManager,
   FilterQuery,
+  OrderDefinition,
   UniqueConstraintViolationException,
+  wrap,
 } from '@mikro-orm/core';
 
 import { Utils } from 'src/shared/utils';
@@ -15,6 +17,7 @@ import { TravelsService } from '../travels/travels.service';
 import { CreateTourInput } from './dto/create-tour.input';
 import { Tour } from './entities/tour.entity';
 import { Travel } from '../travels/entities/travel.entity';
+import { UpdateTourInput } from './dto/update-tour.input';
 
 @Injectable()
 export class ToursService {
@@ -46,6 +49,28 @@ export class ToursService {
       throw error;
     }
   }
+  /**
+   * update an existing tour
+   * @param updateTourInput tour data
+   * @returns updated tour
+   */
+  async update(tourId: string, updateTourInput: UpdateTourInput) {
+    try {
+      const tour = await this.findOne(tourId);
+      if (!tour) {
+        throw new BadRequestException('Invalid travel');
+      }
+      const endDate = Utils.addDaysToDate(
+        updateTourInput.startDate,
+        tour.travel.days,
+      );
+      wrap(tour).assign({ ...updateTourInput, endDate });
+      await this.em.flush();
+      return tour;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   /**
    * get all tours in a paginated way.
@@ -54,10 +79,12 @@ export class ToursService {
    */
   async findAll({ offset, limit }: PaginationArgs) {
     const conditions: FilterQuery<Tour> = {};
+    const orderBy: OrderDefinition<Tour> = { startDate: 'ASC' };
     const [tours, count] = await this.em.findAndCount(Tour, conditions, {
       populate: ['travel'],
       offset,
       limit,
+      orderBy,
     });
     return { tours, count };
   }

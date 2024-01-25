@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   EntityManager,
@@ -58,7 +59,7 @@ export class ToursService {
     try {
       const tour = await this.findOne(tourId);
       if (!tour) {
-        throw new BadRequestException('Invalid travel');
+        throw new NotFoundException();
       }
       const endDate = Utils.addDaysToDate(
         updateTourInput.startDate,
@@ -114,16 +115,16 @@ export class ToursService {
   }
 
   /**
-   * Find earlier date tour for the given travel
+   * Find earliest date tour for the given travel
    * @param travel travel target
-   * @returns earlier date
+   * @returns earliest date
    */
   async findFirstAvailableDateByTravel(travel: Travel) {
-    const earlier = await this.em.findOne(
+    const earliest = await this.em.findOne(
       Tour,
       { travel: { id: travel.id } },
       { populate: ['travel'], orderBy: { startDate: 'ASC' } },
     );
-    return earlier?.startDate;
+    return earliest?.startDate;
   }
 }

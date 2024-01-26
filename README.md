@@ -32,14 +32,16 @@ The application is configured using the `.env` file, placed at the root of the p
 This file is not committed in the project for security reasons,
 but a `.env.example` file is available and provides the correct template for the real `.env` file.
 
-`test.env` is used to run tests
-
 ## 5. Running the application
 
-To easily run the application is available the docker compose setup, that will provide:
+To easily run the application is available the docker compose multi stage setup, that will provide:
 
 - application instance
 - postgres instance
+
+```bash
+$ docker compose up dev
+```
 
 ## 6. Served application
 

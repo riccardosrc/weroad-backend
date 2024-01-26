@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
 import { OPTIONAL_AUTH_KEY } from 'src/shared/decorators/optional-auth.decorator';
-import { AvailableStrategy } from './strategies/strategies.enum';
+import { AvailableStrategy } from '../strategies/strategies.enum';
 
 @Injectable()
 export class JwtAuthGuard

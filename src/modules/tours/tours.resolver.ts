@@ -10,19 +10,21 @@ import {
 import { NotFoundException, UseGuards } from '@nestjs/common';
 
 import { PaginationArgs } from 'src/shared/dto/pagination.args';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ToursService } from './tours.service';
 import { TourType } from './type/tour.type';
 import { Tour } from './entities/tour.entity';
 import { CreateTourInput } from './dto/create-tour.input';
 import { PaginatedTours } from './type/paginated-tours.type';
 import { UpdateTourInput } from './dto/update-tour.input';
+import { AdminGuard } from '../auth/guards/admin.guard';
 
 @Resolver(() => TourType)
 export class ToursResolver {
   constructor(private readonly toursService: ToursService) {}
 
   @Mutation(() => TourType)
+  @UseGuards(AdminGuard)
   @UseGuards(JwtAuthGuard)
   async createTour(@Args('createTourInput') createTourInput: CreateTourInput) {
     const tour = await this.toursService.create(createTourInput);
@@ -30,6 +32,7 @@ export class ToursResolver {
   }
 
   @Mutation(() => TourType)
+  @UseGuards(AdminGuard)
   @UseGuards(JwtAuthGuard)
   async updateTour(
     @Args('id') id: string,

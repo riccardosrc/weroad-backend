@@ -19,7 +19,7 @@ import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
 import { OptionalAuth } from 'src/shared/decorators/optional-auth.decorator';
 import { PaginationArgs } from 'src/shared/dto/pagination.args';
 import { MessageType } from 'src/shared/types/message.type';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from '../users/entities/user.entity';
 import { TourType } from '../tours/type/tour.type';
 import { TravelsService } from './travels.service';
@@ -29,6 +29,7 @@ import { Travel } from './entities/travel.entity';
 import { TravelType } from './types/travel.type';
 import { CreateTravelInput } from './dto/create-travel.input';
 import { ToursService } from '../tours/tours.service';
+import { AdminGuard } from '../auth/guards/admin.guard';
 
 @Resolver(() => TravelType)
 export class TravelsResolver {
@@ -38,6 +39,7 @@ export class TravelsResolver {
   ) {}
 
   @Mutation(() => TravelType)
+  @UseGuards(AdminGuard)
   @UseGuards(JwtAuthGuard)
   async createTravel(
     @Args('createTravelInput') createTravelInput: CreateTravelInput,
@@ -102,6 +104,7 @@ export class TravelsResolver {
 
   @Mutation(() => MessageType)
   @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminGuard)
   async deleteTravel(@Args('id', { type: () => String }) travelId: string) {
     const travelToDelete = await this.travelsService.findOne(travelId);
     if (!travelToDelete) {

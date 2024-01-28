@@ -13,12 +13,12 @@ import {
 } from '@mikro-orm/core';
 
 import { Utils } from 'src/shared/utils';
-import { PaginationArgs } from 'src/shared/dto/pagination.args';
 import { TravelsService } from '../travels/travels.service';
 import { CreateTourInput } from './dto/create-tour.input';
 import { Tour } from './entities/tour.entity';
 import { Travel } from '../travels/entities/travel.entity';
 import { UpdateTourInput } from './dto/update-tour.input';
+import { TourListArgs } from './dto/tour-list.args';
 
 @Injectable()
 export class ToursService {
@@ -73,14 +73,43 @@ export class ToursService {
     }
   }
 
+  private setToursConditions(args: TourListArgs): FilterQuery<Tour> {
+    const conditions: FilterQuery<Tour> = {};
+    if (args.travelId) {
+      conditions.travel = { id: args.travelId };
+    }
+    if (args.dateFrom) {
+      conditions.startDate = { $gte: args.dateFrom };
+    }
+    if (args.dateTo) {
+      conditions.endDate = { $lte: args.dateTo };
+    }
+    if (args.priceFrom) {
+      conditions.price = { $gte: args.priceFrom };
+    }
+    if (args.priceTo) {
+      conditions.price = { $lte: args.priceTo };
+    }
+    if (args.priceFrom && args.priceTo) {
+      conditions.price = {
+        $gte: args.priceFrom,
+        $lte: args.priceTo,
+      };
+    }
+    return conditions;
+  }
+
   /**
    * get all tours in a paginated way.
-   * @param pagination pagination options
+   * @param args pagination and filter options
    * @returns list of tours
    */
-  async findAll({ offset, limit }: PaginationArgs) {
-    const conditions: FilterQuery<Tour> = {};
-    const orderBy: OrderDefinition<Tour> = { startDate: 'ASC' };
+  async findAll(args: TourListArgs) {
+    const conditions: FilterQuery<Tour> = this.setToursConditions(args);
+    const { offset, limit, orderByPrice } = args;
+    const orderBy: OrderDefinition<Tour> = orderByPrice
+      ? { price: orderByPrice }
+      : { startDate: 'ASC' };
     const [tours, count] = await this.em.findAndCount(Tour, conditions, {
       populate: ['travel'],
       offset,

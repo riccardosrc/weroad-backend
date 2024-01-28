@@ -1,25 +1,38 @@
-import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
-import { IsISO8601, IsInt, IsUUID } from 'class-validator';
+import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { Transform } from 'class-transformer';
+import { IsISO8601, IsInt, IsOptional, IsUUID } from 'class-validator';
+import { PaginationArgs } from 'src/shared/dto/pagination.args';
 
-@ObjectType()
-export class TourListArgs {
-  @Field()
+@ArgsType()
+export class TourListArgs extends PaginationArgs {
+  @Field({ nullable: true })
+  @IsOptional()
   @IsUUID('4')
-  travelId: string;
+  travelId?: string;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
   @IsInt()
-  priceFrom: number;
+  @Transform(({ value }) => value * 100)
+  priceFrom?: number;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
   @IsInt()
-  priceTo: number;
+  @Transform(({ value }) => value * 100)
+  priceTo?: number;
 
-  @Field(() => GraphQLISODateTime)
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsISO8601()
-  dateFrom: Date;
+  dateFrom?: Date;
 
-  @Field(() => GraphQLISODateTime)
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsISO8601()
-  dateTo: Date;
+  dateTo?: Date;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  orderByPrice?: 'ASC' | 'DESC';
 }

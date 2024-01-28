@@ -9,7 +9,6 @@ import {
 } from '@nestjs/graphql';
 import { NotFoundException, UseGuards } from '@nestjs/common';
 
-import { PaginationArgs } from 'src/shared/dto/pagination.args';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ToursService } from './tours.service';
 import { TourType } from './type/tour.type';
@@ -18,6 +17,7 @@ import { CreateTourInput } from './dto/create-tour.input';
 import { PaginatedTours } from './type/paginated-tours.type';
 import { UpdateTourInput } from './dto/update-tour.input';
 import { AdminGuard } from '../auth/guards/admin.guard';
+import { TourListArgs } from './dto/tour-list.args';
 
 @Resolver(() => TourType)
 export class ToursResolver {
@@ -43,10 +43,8 @@ export class ToursResolver {
   }
 
   @Query(() => PaginatedTours, { name: 'tours' })
-  async findAll(
-    @Args() paginationArgs: PaginationArgs,
-  ): Promise<PaginatedTours> {
-    const { tours, count } = await this.toursService.findAll(paginationArgs);
+  async findAll(@Args() tourListArgs: TourListArgs): Promise<PaginatedTours> {
+    const { tours, count } = await this.toursService.findAll(tourListArgs);
     return new PaginatedTours(tours, count);
   }
 
